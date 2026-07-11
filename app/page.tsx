@@ -24,13 +24,17 @@ export default function CsvImporter() {
       const text = e.target?.result as string;
       
       Papa.parse(text, {
-        header: true,
-        skipEmptyLines: 'greedy', // Aggressively remove blank artifacts
+        header: false, // Parse as raw row arrays to avoid key mapping mismatches
+        skipEmptyLines: 'greedy',
         complete: (result) => {
-          // Force clean, trimmed header arrays
-          const cleanHeaders = result.meta.fields?.map(h => h.trim()) || [];
-          setPreviewHeaders(cleanHeaders);
-          setPreviewData(result.data.slice(0, 5));
+          if (result.data && result.data.length > 0) {
+            // Extract the first row as headers, clean up windows carriage returns (\r)
+            const rawHeaders = (result.data[0] as string[]).map(h => h.replace(/[\r\n]/g, '').trim());
+            setPreviewHeaders(rawHeaders);
+            
+            // Slice the next 5 rows for clean data previews
+            setPreviewData(result.data.slice(1, 6));
+          }
         }
       });
     };
@@ -69,13 +73,9 @@ export default function CsvImporter() {
     setIsProcessing(true);
 
     try {
-      // Create a clean FormData object and force the file read
       const formData = new FormData();
-      
-      // Reading the file as a Blob/ArrayBuffer ensures Android handles it correctly
       const fileContent = await file.arrayBuffer();
       const blob = new Blob([fileContent], { type: file.type });
-      
       formData.append('file', blob, file.name);
 
       const res = await fetch('https://groweasy-backend-kseo.onrender.com/api/upload', {
@@ -144,7 +144,7 @@ export default function CsvImporter() {
           </div>
         )}
 
-       {/* Step 2: Preview & Confirm */}
+        {/* Step 2: Preview & Confirm */}
         {previewData.length > 0 && !results && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center space-x-2 mb-4">
@@ -152,7 +152,6 @@ export default function CsvImporter() {
               <h2 className={`text-base md:text-lg font-medium ${isDarkMode ? 'text-zinc-100' : 'text-gray-900'}`}>Dataset Preview</h2>
             </div>
             
-            {/* FORCE HORIZONTAL SCROLL ENABLER CONTAINER */}
             <div className={`overflow-x-auto border rounded-lg max-h-96 custom-scrollbar w-full ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
               <table className={`min-w-full divide-y text-sm ${isDarkMode ? 'divide-zinc-800' : 'divide-gray-200'}`}>
                 <thead className={`sticky top-0 ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-gray-100'}`}>
@@ -163,10 +162,12 @@ export default function CsvImporter() {
                   </tr>
                 </thead>
                 <tbody className={`divide-y font-mono text-[10px] md:text-xs ${isDarkMode ? 'bg-[#121212] divide-zinc-800' : 'bg-white divide-gray-200'}`}>
-                  {previewData.map((row, i) => (
+                  {previewData.map((row: string[], i) => (
                     <tr key={i} className={`transition-colors ${isDarkMode ? 'hover:bg-zinc-800/30' : 'hover:bg-gray-50'}`}>
-                      {previewHeaders.map((header, j) => (
-                        <td key={j} className={`px-4 md:px-6 py-3 md:py-4 whitespace-nowrap ${isDarkMode ? 'text-zinc-400' : 'text-gray-600'}`}>{row[header] || '—'}</td>
+                      {previewHeaders.map((_, j) => (
+                        <td key={j} className={`px-4 md:px-6 py-3 md:py-4 whitespace-nowrap ${isDarkMode ? 'text-zinc-400' : 'text-gray-600'}`}>
+                          {row[j] !== undefined && row[j] !== null && row[j].trim() !== '' ? row[j].replace(/[\r\n]/g, '').trim() : '—'}
+                        </td>
                       ))}
                     </tr>
                   ))}
@@ -193,7 +194,6 @@ export default function CsvImporter() {
 
         {results && (
           <div className="animate-in fade-in duration-500">
-            {/* Mobile Stacked Counters */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6">
               <div className="flex justify-center items-center text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-400/10 border border-emerald-200 dark:border-emerald-400/20 px-4 py-3 sm:py-2 rounded">
                 <CheckCircle className="w-4 h-4 mr-2" />
