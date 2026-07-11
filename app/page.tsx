@@ -120,7 +120,7 @@ export default function CsvImporter() {
             <p className={`mb-6 text-sm md:text-base font-medium ${isDarkMode ? 'text-zinc-400' : 'text-gray-600'}`}>Drag and drop your CSV file here, or</p>
             <label className={`cursor-pointer inline-block w-full md:w-auto px-6 py-3 md:py-2.5 rounded font-semibold transition-colors ${isDarkMode ? 'bg-zinc-100 text-zinc-900 hover:bg-white' : 'bg-gray-900 text-white hover:bg-gray-800'}`}>
               Browse Files
-              <input type="file" accept=".csv", text/csv, application/vnd.ms-excel, text/plain" className="hidden" onChange={handleFileUpload} />
+              <input type="file" accept=".csv, text/csv, application/vnd.ms-excel, text/plain" className="hidden" onChange={handleFileUpload} />
             </label>
             <p className={`mt-6 text-[10px] md:text-xs font-mono ${isDarkMode ? 'text-zinc-600' : 'text-gray-400'}`}>SUPPORTED FORMATS: .CSV ONLY</p>
           </div>
