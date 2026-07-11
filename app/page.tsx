@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Papa from 'papaparse';
 import { UploadCloud, CheckCircle, AlertCircle, FileText, Sun, Moon, RotateCcw } from 'lucide-react';
+import { TableVirtuoso } from 'react-virtuoso';
 
 export default function CsvImporter() {
   const [file, setFile] = useState<File | null>(null);
@@ -13,7 +14,6 @@ export default function CsvImporter() {
   const [results, setResults] = useState<any | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   
-  // Theme State
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   const processFile = (uploadedFile: File) => {
@@ -77,7 +77,6 @@ export default function CsvImporter() {
     }
   };
 
-  // Reset function to clear data without reloading the page
   const handleReset = () => {
     setFile(null);
     setPreviewData([]);
@@ -89,11 +88,10 @@ export default function CsvImporter() {
     <div className={`min-h-screen p-4 md:p-8 font-sans selection:bg-red-500/30 transition-colors duration-300 ${isDarkMode ? 'bg-[#0a0a0a] text-zinc-300' : 'bg-gray-100 text-gray-800'}`}>
       <div className={`max-w-6xl mx-auto rounded-2xl border shadow-2xl p-6 md:p-8 transition-colors duration-300 ${isDarkMode ? 'bg-[#121212] border-zinc-800' : 'bg-white border-gray-300'}`}>
         
-        {/* Header & Theme Toggle */}
         <div className={`flex items-center justify-between mb-8 pb-4 border-b ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
           <div className="flex items-center space-x-4">
             <h1 className={`text-2xl font-semibold tracking-tight ${isDarkMode ? 'text-zinc-100' : 'text-gray-900'}`}>CRM_DATA_IMPORTER</h1>
-            <span className={`text-xs font-mono px-2 py-1 rounded ${isDarkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-gray-200 text-gray-600'}`}>v1.1.0</span>
+            <span className={`text-xs font-mono px-2 py-1 rounded ${isDarkMode ? 'bg-zinc-800 text-zinc-400' : 'bg-gray-200 text-gray-600'}`}>v1.2.0</span>
           </div>
           
           <button 
@@ -105,7 +103,6 @@ export default function CsvImporter() {
           </button>
         </div>
         
-        {/* Step 1: Drag & Drop Upload */}
         {!results && !previewData.length && (
           <div 
             onDragOver={handleDragOver}
@@ -129,7 +126,6 @@ export default function CsvImporter() {
           </div>
         )}
 
-        {/* Step 2: Preview & Confirm */}
         {previewData.length > 0 && !results && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center space-x-2 mb-4">
@@ -175,7 +171,6 @@ export default function CsvImporter() {
           </div>
         )}
 
-        {/* Step 3: Results */}
         {results && (
           <div className="animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4 mb-6">
@@ -189,37 +184,38 @@ export default function CsvImporter() {
               </div>
             </div>
 
-            <h2 className={`text-lg font-medium mb-4 ${isDarkMode ? 'text-zinc-100' : 'text-gray-900'}`}>Mapped CRM Records</h2>
-            <div className={`overflow-x-auto border rounded-lg max-h-[500px] custom-scrollbar ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
-              <table className={`min-w-full divide-y text-sm ${isDarkMode ? 'divide-zinc-800' : 'divide-gray-200'}`}>
-                <thead className={`sticky top-0 ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-gray-100'}`}>
-                  <tr>
-                    <th className={`px-6 py-3 text-left font-mono text-xs font-medium uppercase tracking-wider ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>Name</th>
-                    <th className={`px-6 py-3 text-left font-mono text-xs font-medium uppercase tracking-wider ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>Email</th>
-                    <th className={`px-6 py-3 text-left font-mono text-xs font-medium uppercase tracking-wider ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>Mobile</th>
-                    <th className={`px-6 py-3 text-left font-mono text-xs font-medium uppercase tracking-wider ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>Status</th>
-                    <th className={`px-6 py-3 text-left font-mono text-xs font-medium uppercase tracking-wider ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>Notes</th>
+            <h2 className={`text-lg font-medium mb-4 ${isDarkMode ? 'text-zinc-100' : 'text-gray-900'}`}>Mapped CRM Records (Virtualized)</h2>
+            
+            {/* VIRTUALIZED TABLE CONTAINER */}
+            <div className={`border rounded-lg overflow-hidden ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
+              <TableVirtuoso
+                style={{ height: '400px', width: '100%' }}
+                data={results.data}
+                fixedHeaderContent={() => (
+                  <tr className={`text-left font-mono text-xs font-medium uppercase tracking-wider ${isDarkMode ? 'bg-[#1a1a1a] text-zinc-500' : 'bg-gray-100 text-gray-500'}`}>
+                    <th className="px-6 py-3 border-b border-inherit">Name</th>
+                    <th className="px-6 py-3 border-b border-inherit">Email</th>
+                    <th className="px-6 py-3 border-b border-inherit">Mobile</th>
+                    <th className="px-6 py-3 border-b border-inherit">Status</th>
+                    <th className="px-6 py-3 border-b border-inherit">Notes</th>
                   </tr>
-                </thead>
-                <tbody className={`divide-y font-mono text-xs ${isDarkMode ? 'bg-[#121212] divide-zinc-800' : 'bg-white divide-gray-200'}`}>
-                  {results.data?.map((record: any, i: number) => (
-                    <tr key={i} className={`transition-colors ${isDarkMode ? 'hover:bg-zinc-800/30' : 'hover:bg-gray-50'}`}>
-                      <td className={`px-6 py-4 whitespace-nowrap ${isDarkMode ? 'text-zinc-200' : 'text-gray-800'}`}>{record.name || '—'}</td>
-                      <td className={`px-6 py-4 whitespace-nowrap ${isDarkMode ? 'text-zinc-400' : 'text-gray-600'}`}>{record.email || '—'}</td>
-                      <td className={`px-6 py-4 whitespace-nowrap ${isDarkMode ? 'text-zinc-400' : 'text-gray-600'}`}>{record.mobile_without_country_code || '—'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {record.crm_status ? (
-                           <span className={`px-2 py-1 rounded border text-[10px] ${isDarkMode ? 'bg-zinc-800 text-zinc-300 border-zinc-700' : 'bg-gray-100 text-gray-700 border-gray-300'}`}>{record.crm_status}</span>
-                        ) : '—'}
-                      </td>
-                      <td className={`px-6 py-4 truncate max-w-xs ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>{record.crm_note || '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                )}
+                itemContent={(_index, record: any) => (
+                  <>
+                    <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'text-zinc-200 border-zinc-800/50' : 'text-gray-800 border-gray-100'}`}>{record.name || '—'}</td>
+                    <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'text-zinc-400 border-zinc-800/50' : 'text-gray-600 border-gray-100'}`}>{record.email || '—'}</td>
+                    <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'text-zinc-400 border-zinc-800/50' : 'text-gray-600 border-gray-100'}`}>{record.mobile_without_country_code || '—'}</td>
+                    <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'border-zinc-800/50' : 'border-gray-100'}`}>
+                      {record.crm_status ? (
+                         <span className={`px-2 py-1 rounded border text-[10px] ${isDarkMode ? 'bg-zinc-800 text-zinc-300 border-zinc-700' : 'bg-gray-100 text-gray-700 border-gray-300'}`}>{record.crm_status}</span>
+                      ) : '—'}
+                    </td>
+                    <td className={`px-6 py-4 truncate max-w-xs border-b ${isDarkMode ? 'text-zinc-500 border-zinc-800/50' : 'text-gray-500 border-gray-100'}`}>{record.crm_note || '—'}</td>
+                  </>
+                )}
+              />
             </div>
 
-            {/* Start Over Button */}
             <div className="mt-8 flex justify-end">
               <button 
                 onClick={handleReset}
