@@ -18,16 +18,24 @@ export default function CsvImporter() {
 
   const processFile = (uploadedFile: File) => {
     setFile(uploadedFile);
-    Papa.parse(uploadedFile, {
-      header: true,
-      skipEmptyLines: true,
-      delimiter: ",", // Explicitly force comma separation
-      transformHeader: (header) => header.trim(), // Clean up any weird invisible spaces
-      complete: (result) => {
-        setPreviewHeaders(result.meta.fields || []);
-        setPreviewData(result.data.slice(0, 5));
-      }
-    });
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      
+      Papa.parse(text, {
+        header: true,
+        skipEmptyLines: 'greedy', // Aggressively remove blank artifacts
+        complete: (result) => {
+          // Force clean, trimmed header arrays
+          const cleanHeaders = result.meta.fields?.map(h => h.trim()) || [];
+          setPreviewHeaders(cleanHeaders);
+          setPreviewData(result.data.slice(0, 5));
+        }
+      });
+    };
+    
+    reader.readAsText(uploadedFile);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
