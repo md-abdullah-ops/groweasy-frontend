@@ -188,6 +188,8 @@ export default function CsvImporter() {
             
             {/* VIRTUALIZED TABLE CONTAINER */}
             <div className={`border rounded-lg overflow-hidden ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
+              {/* VIRTUALIZED TABLE CONTAINER */}
+            <div className={`border rounded-lg overflow-hidden ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
               <TableVirtuoso
                 style={{ height: '400px', width: '100%' }}
                 data={results.data}
@@ -196,6 +198,7 @@ export default function CsvImporter() {
                     <th className="px-6 py-3 border-b border-inherit">Name</th>
                     <th className="px-6 py-3 border-b border-inherit">Email</th>
                     <th className="px-6 py-3 border-b border-inherit">Mobile</th>
+                    <th className="px-6 py-3 border-b border-inherit">Source</th>
                     <th className="px-6 py-3 border-b border-inherit">Status</th>
                     <th className="px-6 py-3 border-b border-inherit">Notes</th>
                   </tr>
@@ -205,6 +208,11 @@ export default function CsvImporter() {
                     <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'text-zinc-200 border-zinc-800/50' : 'text-gray-800 border-gray-100'}`}>{record.name || '—'}</td>
                     <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'text-zinc-400 border-zinc-800/50' : 'text-gray-600 border-gray-100'}`}>{record.email || '—'}</td>
                     <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'text-zinc-400 border-zinc-800/50' : 'text-gray-600 border-gray-100'}`}>{record.mobile_without_country_code || '—'}</td>
+                    <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'text-zinc-400 border-zinc-800/50' : 'text-gray-600 border-gray-100'}`}>
+                      {record.data_source ? (
+                         <span className={`px-2 py-1 rounded border text-[10px] ${isDarkMode ? 'bg-blue-900/20 text-blue-400 border-blue-800/50' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>{record.data_source}</span>
+                      ) : '—'}
+                    </td>
                     <td className={`px-6 py-4 whitespace-nowrap border-b ${isDarkMode ? 'border-zinc-800/50' : 'border-gray-100'}`}>
                       {record.crm_status ? (
                          <span className={`px-2 py-1 rounded border text-[10px] ${isDarkMode ? 'bg-zinc-800 text-zinc-300 border-zinc-700' : 'bg-gray-100 text-gray-700 border-gray-300'}`}>{record.crm_status}</span>
