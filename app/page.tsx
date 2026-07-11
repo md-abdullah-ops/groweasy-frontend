@@ -216,7 +216,7 @@ export default function CsvImporter() {
                          <span className={`px-2 py-1 rounded border text-[10px] ${isDarkMode ? 'bg-zinc-800 text-zinc-300 border-zinc-700' : 'bg-gray-100 text-gray-700 border-gray-300'}`}>{record.crm_status}</span>
                       ) : '—'}
                     </td>
-                    <td className={`px-4 md:px-6 py-3 md:py-4 truncate max-w-[150px] md:max-w-xs border-b ${isDarkMode ? 'text-zinc-500 border-zinc-800/50' : 'text-gray-500 border-gray-100'}`}>{record.crm_note || '—'}</td>
+                    <td className={`px-4 md:px-6 py-3 md:py-4 whitespace-nowrap border-b ${isDarkMode ? 'text-zinc-500 border-zinc-800/50' : 'text-gray-500 border-gray-100'}`}>{record.crm_note || '—'}</td>
                   </>
                 )}
               />
