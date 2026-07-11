@@ -58,20 +58,28 @@ export default function CsvImporter() {
     if (!file) return;
     setIsProcessing(true);
 
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
+      // Create a clean FormData object and force the file read
+      const formData = new FormData();
+      
+      // Reading the file as a Blob/ArrayBuffer ensures Android handles it correctly
+      const fileContent = await file.arrayBuffer();
+      const blob = new Blob([fileContent], { type: file.type });
+      
+      formData.append('file', blob, file.name);
+
       const res = await fetch('https://groweasy-backend-kseo.onrender.com/api/upload', {
         method: 'POST',
         body: formData,
       });
       
+      if (!res.ok) throw new Error('Upload failed');
+      
       const data = await res.json();
       setResults(data);
     } catch (error) {
       console.error("Import failed:", error);
-      alert("Failed to process the file.");
+      alert("Failed to process the file. Try selecting it via your file manager.");
     } finally {
       setIsProcessing(false);
     }
