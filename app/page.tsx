@@ -134,6 +134,7 @@ export default function CsvImporter() {
           </div>
         )}
 
+       {/* Step 2: Preview & Confirm */}
         {previewData.length > 0 && !results && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center space-x-2 mb-4">
@@ -141,12 +142,13 @@ export default function CsvImporter() {
               <h2 className={`text-base md:text-lg font-medium ${isDarkMode ? 'text-zinc-100' : 'text-gray-900'}`}>Dataset Preview</h2>
             </div>
             
-            <div className={`overflow-x-auto border rounded-lg max-h-96 custom-scrollbar ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
+            {/* FORCE HORIZONTAL SCROLL ENABLER CONTAINER */}
+            <div className={`overflow-x-auto border rounded-lg max-h-96 custom-scrollbar w-full ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
               <table className={`min-w-full divide-y text-sm ${isDarkMode ? 'divide-zinc-800' : 'divide-gray-200'}`}>
                 <thead className={`sticky top-0 ${isDarkMode ? 'bg-[#1a1a1a]' : 'bg-gray-100'}`}>
                   <tr>
                     {previewHeaders.map((header, i) => (
-                      <th key={i} className={`px-4 md:px-6 py-3 text-left font-mono text-[10px] md:text-xs font-medium uppercase tracking-wider ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>{header}</th>
+                      <th key={i} className={`px-4 md:px-6 py-3 text-left font-mono text-[10px] md:text-xs font-medium uppercase tracking-wider whitespace-nowrap ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>{header}</th>
                     ))}
                   </tr>
                 </thead>
@@ -154,7 +156,7 @@ export default function CsvImporter() {
                   {previewData.map((row, i) => (
                     <tr key={i} className={`transition-colors ${isDarkMode ? 'hover:bg-zinc-800/30' : 'hover:bg-gray-50'}`}>
                       {previewHeaders.map((header, j) => (
-                        <td key={j} className={`px-4 md:px-6 py-3 md:py-4 whitespace-nowrap ${isDarkMode ? 'text-zinc-400' : 'text-gray-600'}`}>{row[header]}</td>
+                        <td key={j} className={`px-4 md:px-6 py-3 md:py-4 whitespace-nowrap ${isDarkMode ? 'text-zinc-400' : 'text-gray-600'}`}>{row[header] || '—'}</td>
                       ))}
                     </tr>
                   ))}
