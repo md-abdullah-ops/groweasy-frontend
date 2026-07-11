@@ -36,7 +36,7 @@ export default function CsvImporter() {
     formData.append('file', file);
 
     try {
-      const res = await fetch('http://localhost:3001/api/upload', {
+      const res = await fetch('https://groweasy-backend-kseo.onrender.com/api/upload', {
         method: 'POST',
         body: formData,
       });
