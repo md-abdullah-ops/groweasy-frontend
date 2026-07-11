@@ -21,6 +21,8 @@ export default function CsvImporter() {
     Papa.parse(uploadedFile, {
       header: true,
       skipEmptyLines: true,
+      delimiter: ",", // Explicitly force comma separation
+      transformHeader: (header) => header.trim(), // Clean up any weird invisible spaces
       complete: (result) => {
         setPreviewHeaders(result.meta.fields || []);
         setPreviewData(result.data.slice(0, 5));
