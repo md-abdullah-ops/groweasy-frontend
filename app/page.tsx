@@ -23,20 +23,39 @@ export default function CsvImporter() {
     reader.onload = (e) => {
       const text = e.target?.result as string;
       
-      Papa.parse(text, {
-        header: false, // Parse as raw row arrays to avoid key mapping mismatches
-        skipEmptyLines: 'greedy',
-        complete: (result) => {
-          if (result.data && result.data.length > 0) {
-            // Extract the first row as headers, clean up windows carriage returns (\r)
-            const rawHeaders = (result.data[0] as string[]).map(h => h.replace(/[\r\n]/g, '').trim());
-            setPreviewHeaders(rawHeaders);
-            
-            // Slice the next 5 rows for clean data previews
-            setPreviewData(result.data.slice(1, 6));
+      // Clean up Windows carriage returns and split into separate rows
+      const rows = text.split(/\r?\n/).map(row => row.trim()).filter(row => row.length > 0);
+      
+      if (rows.length > 0) {
+        // Function to accurately parse a CSV line, respecting potential quotes
+        const parseCsvLine = (line: string) => {
+          const result = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              result.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
           }
-        }
-      });
+          result.push(current.trim());
+          return result;
+        };
+
+        // Extract and clean the headers
+        const rawHeaders = parseCsvLine(rows[0]);
+        setPreviewHeaders(rawHeaders);
+        
+        // Extract the first 5 data rows as raw arrays
+        const rawData = rows.slice(1, 6).map(row => parseCsvLine(row));
+        setPreviewData(rawData);
+      }
     };
     
     reader.readAsText(uploadedFile);
