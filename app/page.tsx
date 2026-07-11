@@ -186,8 +186,6 @@ export default function CsvImporter() {
 
             <h2 className={`text-lg font-medium mb-4 ${isDarkMode ? 'text-zinc-100' : 'text-gray-900'}`}>Mapped CRM Records (Virtualized)</h2>
             
-            {/* VIRTUALIZED TABLE CONTAINER */}
-            <div className={`border rounded-lg overflow-hidden ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
               {/* VIRTUALIZED TABLE CONTAINER */}
             <div className={`border rounded-lg overflow-hidden ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'}`}>
               <TableVirtuoso
